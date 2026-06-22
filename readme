@@ -1,0 +1,70 @@
+# ServiceNow Developer Instance — Daily Wake-Up
+
+Automatically logs into your ServiceNow Personal Developer Instance every day so it never expires due to inactivity.
+
+---
+
+## How It Works
+
+A GitHub Actions workflow runs on a schedule each morning. It uses Playwright (a headless browser) to open your ServiceNow instance and log in, keeping it active.
+
+---
+
+## Setup Guide
+
+### Step 1: Create a GitHub Repository
+
+1. Go to [github.com](https://github.com) and create a new **private** repository.
+2. Upload these files maintaining the folder structure:
+   ```
+   login.py
+   .github/
+     workflows/
+       wake-servicenow.yml
+   ```
+
+### Step 2: Add Your Credentials as GitHub Secrets
+
+> ⚠️ Never put your credentials directly in code. Use Secrets.
+
+1. In your GitHub repo, go to **Settings → Secrets and variables → Actions**
+2. Click **"New repository secret"** and add these three secrets:
+
+   | Secret Name        | Value Example                          |
+   |--------------------|----------------------------------------|
+   | `SN_INSTANCE_URL`  | `https://devXXXXX.service-now.com`     |
+   | `SN_USERNAME`      | `admin`                                |
+   | `SN_PASSWORD`      | `your_password_here`                   |
+
+### Step 3: Enable GitHub Actions
+
+1. Go to the **Actions** tab in your repository.
+2. If prompted, click **"I understand my workflows, go ahead and enable them"**.
+
+### Step 4: Test It Manually
+
+1. Go to **Actions → Wake ServiceNow Developer Instance**
+2. Click **"Run workflow"** → **"Run workflow"** (green button)
+3. Watch the logs to confirm it logs in successfully ✅
+
+---
+
+## Customizing the Schedule
+
+The workflow runs daily at **8:00 AM IST** by default. To change the time, edit the `cron` line in `.github/workflows/wake-servicenow.yml`:
+
+```yaml
+- cron: '30 2 * * *'   # 2:30 AM UTC = 8:00 AM IST
+```
+
+Use [crontab.guru](https://crontab.guru) to build your preferred schedule.
+
+---
+
+## Troubleshooting
+
+| Issue | Fix |
+|---|---|
+| Still on login page | Double-check `SN_USERNAME` and `SN_PASSWORD` secrets |
+| Timeout error | Your instance URL may be wrong, or it's fully expired |
+| Workflow not running | Make sure Actions are enabled in the repo settings |
