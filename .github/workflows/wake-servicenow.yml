@@ -1,0 +1,36 @@
+name: Wake ServiceNow Developer Instance
+
+on:
+  schedule:
+    # Runs every day at 8:00 AM IST (2:30 AM UTC)
+    # Adjust the UTC time below to match your preferred wake-up time
+    - cron: '30 2 * * *'
+
+  # Also allows you to trigger it manually from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  wake-instance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Wake up ServiceNow instance
+        env:
+          SN_INSTANCE_URL: ${{ secrets.SN_INSTANCE_URL }}
+          SN_USERNAME: ${{ secrets.SN_USERNAME }}
+          SN_PASSWORD: ${{ secrets.SN_PASSWORD }}
+        run: python login.py
