@@ -1,0 +1,25 @@
+name: Keep Repo Active
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 7:30 AM IST
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Keep alive ping
+        run: echo "Keeping repo active - $(date)"
+
+      - name: Commit timestamp
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          echo "Last active: $(date)" > .keep-alive
+          git add .keep-alive
+          git commit -m "chore: keep repo active [skip ci]" || echo "Nothing to commit"
+          git push
